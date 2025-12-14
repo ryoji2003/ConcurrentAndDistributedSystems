@@ -5,6 +5,10 @@ step 1 : You divide N answer sheets equally among yourself and $M$ friends, for 
 step 2 : Each person finds a local maximum from the stack they are responsible for. 
 step 3 : Everyone brings together their local maximums and determines a global maximum from them.
 
+# Task 1.2 Topology Experiment
+java TopologyExperiment.java 
+basic network: 20 milliseconds, advanced network: 15 milliseconds.
+
 # Task 1.3 Embarrassing Parallelism
 b, c, e
 
