@@ -1,8 +1,0 @@
-apple
-banana
-level
-computer
-radar
-java
-noon
-table
