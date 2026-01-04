@@ -1,0 +1,31 @@
+never p1 {    /* !([] (<> (((state==1)) && (doors_open)))) */
+T0_init:
+	do
+	:: (! ((((state==1)) && (doors_open)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! ((((state==1)) && (doors_open)))) -> goto accept_S4
+	od;
+}
+never p2 {    /* !([] ((! (doors_open)) || (((state==1)) || ((state==3))))) */
+T0_init:
+	do
+	:: atomic { (! (((! (doors_open)) || (((state==1)) || ((state==3)))))) -> assert(!(! (((! (doors_open)) || (((state==1)) || ((state==3))))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
+never p3 {    /* !([] ((! (! (doors_open))) || (<> (((state==2)) || ((state==4)))))) */
+T0_init:
+	do
+	:: (! ((! (! (doors_open)))) && ! ((((state==2)) || ((state==4))))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! ((((state==2)) || ((state==4))))) -> goto accept_S4
+	od;
+}
