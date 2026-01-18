@@ -3,3 +3,5 @@ videos
 .DS_Store
 videos
 音声
+*.zip
+*exam
