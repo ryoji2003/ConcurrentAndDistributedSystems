@@ -11,7 +11,7 @@ public class ex06_skunkWithBugs {
 		// ask each player's decision and return the number of players still standing
 		int recv[] = new int[1];
 		MPI.COMM_WORLD.Bcast(new int[]{ DECIDE }, 0, 1, MPI.INT, 0);
-		MPI.COMM_WORLD.Reduce(new int[1], 0, recv, 0, 1, MPI.INT, MPI.PROD, 0);
+		MPI.COMM_WORLD.Reduce(new int[1], 0, recv, 0, 1, MPI.INT, MPI.SUM, 0);
 		return recv[0];
 	}
 
@@ -33,7 +33,7 @@ public class ex06_skunkWithBugs {
 				System.out.println(String.format("Active players: %d. Rolling dice: %d %d.", sp, d1, d2));
 
 				// send dice to everyone
-				MPI.COMM_WORLD.Send(new int[]{ REC_DICE, d1, d2 }, 0, 3, MPI.INT, 0);
+				MPI.COMM_WORLD.Bcast(new int[]{ REC_DICE, d1, d2 }, 0, 3, MPI.INT, 0);
 			}
 		}
 
@@ -104,7 +104,7 @@ public class ex06_skunkWithBugs {
 			}
 		}
 
-		MPI.COMM_WORLD.Scatter(new int[]{totalSum}, 0, 1, MPI.INT, new int[MPI.COMM_WORLD.Size()], 0, 1, MPI.INT, 0);
+		MPI.COMM_WORLD.Gather(new int[]{totalSum}, 0, 1, MPI.INT, new int[MPI.COMM_WORLD.Size()], 0, 1, MPI.INT, 0);
 	}
 
 	public static void main(String args[]) throws Exception 

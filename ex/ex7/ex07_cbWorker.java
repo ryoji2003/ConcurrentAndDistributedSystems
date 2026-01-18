@@ -46,13 +46,21 @@ public class ex07_cbWorker
         return "NOT FOUND";
     }
 
-    public static void main(String argv[]) throws Exception 
+    public static void main(String argv[]) throws Exception
     {
         MzsCore core = DefaultMzsCore.newInstanceWithoutSpace();
         Capi capi = new Capi(core);
-        ContainerReference jobKeyContainer = capi.lookupContainer("JobKeys", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
+
+        // Randomly select one of two job containers for load balancing
+        java.util.Random r = new java.util.Random();
+        int containerChoice = r.nextInt(2) + 1;  // 1 or 2
+        String containerName = "JobKeys" + containerChoice;
+
+        ContainerReference jobKeyContainer = capi.lookupContainer(containerName, URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
         ContainerReference queueContainer = capi.lookupContainer("Queue", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
         ContainerReference resultContainer = capi.lookupContainer("Results", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
+
+        System.out.println("Worker connected to container: " + containerName);
 
         for(;;)
         {

@@ -28,12 +28,12 @@ public class ex07_cbClient
 		}
 	}
 	
-    public static void main(String argv[]) throws Exception 
+    public static void main(String argv[]) throws Exception
     {
         java.util.Random r = new java.util.Random();
         String jobId = String.valueOf(r.nextInt(1000000));
         String password = "";
-        
+
         for (int i = 0; i < 5; ++i)
             password += (char)('a' + r.nextInt(26));
 
@@ -41,14 +41,19 @@ public class ex07_cbClient
 
         MzsCore core = DefaultMzsCore.newInstanceWithoutSpace();
         Capi capi = new Capi(core);
-        
-        ContainerReference jobKeyContainer = capi.lookupContainer("JobKeys", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
+
+        // Randomly select one of two job containers for load balancing
+        int containerChoice = r.nextInt(2) + 1;  // 1 or 2
+        String containerName = "JobKeys" + containerChoice;
+
+        ContainerReference jobKeyContainer = capi.lookupContainer(containerName, URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
         ContainerReference queueContainer = capi.lookupContainer("Queue", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
         ContainerReference resultContainer = capi.lookupContainer("Results", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
 
-        Entry newEntry = new Entry(encryptedMessage(password),  KeyCoordinator.newCoordinationData(jobId));
+        Entry newEntry = new Entry(encryptedMessage(password), KeyCoordinator.newCoordinationData(jobId));
         capi.write(queueContainer, newEntry);
         capi.write(jobKeyContainer, new Entry(jobId));
+        System.out.println("Job published to container: " + containerName);
 
         ArrayList<String> entries = capi.take(resultContainer, KeyCoordinator.newSelector(jobId), MzsConstants.RequestTimeout.INFINITE, null);
         System.out.println("Found password: " + entries.get(0));
