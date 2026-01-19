@@ -48,10 +48,18 @@ public class ex07_cbWorker
 
     public static void main(String argv[]) throws Exception 
     {
+        java.util.Random r = new java.util.Random();
         MzsCore core = DefaultMzsCore.newInstanceWithoutSpace();
         Capi capi = new Capi(core);
-        ContainerReference jobKeyContainer = capi.lookupContainer("JobKeys", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
-        ContainerReference queueContainer = capi.lookupContainer("Queue", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
+        
+        int queueNum = r.nextInt(2) + 1;
+        System.out.println("Worker using queue " + queueNum);
+        
+        String jobKeyName = "JobKeys" + queueNum;
+        String queueName = "Queue" + queueNum;
+        
+        ContainerReference jobKeyContainer = capi.lookupContainer(jobKeyName, URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
+        ContainerReference queueContainer = capi.lookupContainer(queueName, URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
         ContainerReference resultContainer = capi.lookupContainer("Results", URI.create("xvsm://localhost:9876"), MzsConstants.RequestTimeout.DEFAULT, null);
 
         for(;;)
